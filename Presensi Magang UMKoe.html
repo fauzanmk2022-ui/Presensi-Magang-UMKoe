@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Presensi Magang</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background: var(--surface-0, #f5f5f5); color: var(--text-primary, #1a1a1a); }
+        .container { max-width: 1200px; margin: 0 auto; padding: 1rem; }
+        .header { background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%); color: white; padding: 2rem 1rem; border-radius: 12px; margin-bottom: 2rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .header h1 { font-size: 28px; margin-bottom: 0.5rem; }
+        .header p { font-size: 14px; opacity: 0.95; }
+        .nav-tabs { display: flex; gap: 0.5rem; margin-bottom: 2rem; border-bottom: 2px solid #e5e5e5; overflow-x: auto; }
+        .nav-tab { padding: 1rem; background: none; border: none; border-bottom: 3px solid transparent; cursor: pointer; font-size: 15px; font-weight: 500; color: var(--text-secondary, #666); white-space: nowrap; transition: all 0.3s ease; }
+        .nav-tab.active { color: #1e40af; border-bottom-color: #1e40af; }
+        .nav-tab:hover { color: var(--text-primary, #1a1a1a); }
+        .content { background: var(--surface-2, white); border-radius: 12px; padding: 2rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .form-group { margin-bottom: 1.5rem; }
+        .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 500; font-size: 14px; }
+        .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; font-family: inherit; }
+        .form-group textarea { resize: vertical; min-height: 100px; }
+        .btn-group { display: flex; gap: 1rem; margin-top: 1.5rem; }
+        .btn { padding: 0.75rem 1.5rem; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; flex: 1; text-align: center; }
+        .btn-primary { background: #1e40af; color: white; }
+        .btn-secondary { background: #f3f4f6; border: 1px solid #ddd; }
+        .btn-success { background: #10b981; color: white; }
+        .attendance-status { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 2rem; }
+        .status-card { background: #f9fafb; padding: 1.5rem; border-radius: 8px; text-align: center; border: 1px solid #e5e7eb; }
+        .status-label { font-size: 12px; color: #666; margin-bottom: 0.5rem; text-transform: uppercase; }
+        .status-time { font-size: 24px; font-weight: 700; color: #1e40af; }
+        .status-icon { font-size: 32px; margin-bottom: 0.5rem; }
+        .success { color: #10b981; } .warning { color: #f59e0b; }
+        .activity-list { display: flex; flex-direction: column; gap: 1rem; }
+        .activity-card { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 1rem; display: flex; justify-content: space-between; align-items: start; }
+        .activity-info h3 { font-size: 15px; margin-bottom: 0.5rem; }
+        .activity-info p { font-size: 12px; color: #666; margin: 0.25rem 0; }
+        .activity-action { display: flex; gap: 0.5rem; flex-direction: column; }
+        .btn-small { padding: 0.5rem 1rem; font-size: 12px; border-radius: 6px; border: none; cursor: pointer; }
+        .btn-small-danger { background: #fee2e2; color: #991b1b; }
+        .btn-small-info { background: #dbeafe; color: #1e40af; font-weight: bold;}
+        .upload-zone { border: 2px dashed #bfdbfe; border-radius: 8px; padding: 2rem; text-align: center; background: #eff6ff; cursor: pointer; margin: 1.5rem 0; }
+        .upload-icon { font-size: 32px; margin-bottom: 0.5rem; }
+        .upload-text { font-size: 14px; margin-bottom: 0.25rem; }
+        .upload-hint { font-size: 12px; color: #666; }
+        #fileInput { display: none; }
+        .file-list { margin-top: 1rem; }
+        .file-item { background: white; padding: 0.75rem; border-radius: 6px; border: 1px solid #e5e7eb; display: flex; justify-content: space-between; align-items: center; font-size: 13px; margin-bottom: 0.5rem; }
+        .badge { display: inline-block; padding: 0.25rem 0.75rem; border-radius: 999px; font-size: 11px; font-weight: 600; text-transform: uppercase; }
+        .badge-info { background: #dbeafe; color: #1e40af; }
+        .badge-success { background: #dcfce7; color: #166534; }
+        .badge-warning { background: #fef3c7; color: #92400e; }
+        .report-table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+        .report-table th { background: #f3f4f6; padding: 0.75rem; text-align: left; font-size: 13px; border-bottom: 2px solid #e5e7eb;}
+        .report-table td { padding: 0.75rem; border-bottom: 1px solid #e5e7eb; font-size: 13px; }
+        .toast { position: fixed; bottom: 2rem; right: 2rem; padding: 1rem 1.5rem; border-radius: 8px; color: white; font-size: 14px; animation: slideIn 0.3s ease; z-index: 1000; }
+        .toast-success { background: #10b981; } .toast-error { background: #ef4444; }
+        @keyframes slideIn { from { transform: translateX(400px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 2rem; }
+        .stat-box { background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%); padding: 1.5rem; border-radius: 8px; text-align: center; }
+        .stat-value { font-size: 28px; font-weight: 700; color: #1e40af; }
+        .stat-label { font-size: 13px; color: #666; }
+        @media (max-width: 768px) { .attendance-status, .stats-grid { grid-template-columns: 1fr; } .btn-group { flex-direction: column; } .nav-tab { padding: 0.75rem 1rem; font-size: 13px; } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📋 Sistem Presensi Magang</h1>
+            <p>Universitas Muhammadiyah Kupang - Pencatatan Kehadiran & Aktivitas</p>
+        </div>
+
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="switchTab('dashboard')">Dashboard</button>
+            <button class="nav-tab" onclick="switchTab('presensi')">Presensi</button>
+            <button class="nav-tab" onclick="switchTab('aktivitas')">Aktivitas</button>
+            <button class="nav-tab" onclick="switchTab('laporan')">Laporan</button>
+        </div>
+
+        <div class="content">
+            <div class="tab-content active" id="dashboard">
+                <h2 style="margin-bottom: 1.5rem;">Dashboard</h2>
+                <div class="stats-grid">
+                    <div class="stat-box"><div class="stat-value" id="totalHadirStat">0</div><div class="stat-label">Hari Hadir</div></div>
+                    <div class="stat-box"><div class="stat-value" id="totalAktivitasStat">0</div><div class="stat-label">Total Aktivitas</div></div>
+                </div>
+                <h3 style="margin-bottom: 1rem;">Status Hari Ini</h3>
+                <div class="attendance-status">
+                    <div class="status-card">
+                        <div class="status-label">Waktu Datang</div>
+                        <div class="status-icon success" id="checkinIcon">✓</div>
+                        <div class="status-time" id="checkinTime">--:--</div>
+                        <p id="checkinStatus" style="font-size: 12px; color: #666; margin-top: 0.5rem;">Belum absen datang</p>
+                    </div>
+                    <div class="status-card">
+                        <div class="status-label">Waktu Pulang</div>
+                        <div class="status-icon warning" id="checkoutIcon">-</div>
+                        <div class="status-time" id="checkoutTime">--:--</div>
+                        <p id="checkoutStatus" style="font-size: 12px; color: #666; margin-top: 0.5rem;">Belum absen pulang</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-content" id="presensi">
+                <h2 style="margin-bottom: 1.5rem;">Absensi Kehadiran</h2>
+                <div class="form-group"><label>Nama Siswa</label><input type="text" id="studentName" placeholder="Masukkan nama lengkap"></div>
+                <div class="form-group"><label>SEKOLAH / NIM</label><input type="text" id="studentId" placeholder="Isi Asal Sekolah / NIM Siswa"></div>
+                <div class="form-group"><label>Jurusan / Program Studi</label>
+                    <select id="program">
+                        <option value="">Pilih Jurusan</option>
+                        <option value="Teknik Komputer">Teknik Komputer dan Jaringan (TKJ)</option>
+                        <option value="Teknik Kendaraan">Teknik Kendaraan Ringan Otomotif (TKRO)</option>
+                        <option value="NKPI">Nautika Kapal Penangkapan Ikan</option>
+                        <option value="ATPH">Agribisnis Tanaman Pangan dan Hortikultura</option>
+                        <option value="APAT">Agribisnis Perikanan Air Tawar</option>
+                        <option value="TPHP">Teknologi Pengolahan Hasil Pertanian</option>
+                        <option value="TJKT">Teknik Jaringan Komputer dan Telekomunikasi</option>
+                        <option value="Lainnya">Lainnya...</option>
+                    </select>
+                </div>
+                <div class="btn-group">
+                    <button class="btn btn-success" onclick="checkIn()">✓ Absen Datang</button>
+                    <button class="btn btn-success" onclick="checkOut()">✗ Absen Pulang</button>
+                </div>
+                <h3 style="margin-top: 2rem; margin-bottom: 1rem;">Riwayat Presensi Hari Ini</h3>
+                <div id="attendanceHistory"><p style="text-align: center; color: #666; padding: 2rem;">Belum ada riwayat</p></div>
+            </div>
+
+            <div class="tab-content" id="aktivitas">
+                <h2 style="margin-bottom: 1.5rem;">Pencatatan Aktivitas Harian</h2>
+                <div class="form-group"><label>Nama Siswa</label><input type="text" id="activityStudentName" placeholder="Masukkan nama lengkap Anda"></div>
+                <div class="form-group"><label>Nama Kegiatan</label><input type="text" id="activityName" placeholder="Contoh: Pengecekan Jaringan Komputer"></div>
+                <div class="form-group"><label>Deskripsi Kegiatan</label><textarea id="activityDescription" placeholder="Jelaskan kegiatan secara detail..."></textarea></div>
+                <div class="form-group"><label>Tanggal Kegiatan</label><input type="date" id="activityDate"></div>
+                <div class="form-group"><label>Waktu Mulai</label><input type="time" id="activityStartTime"></div>
+                <div class="form-group"><label>Waktu Selesai</label><input type="time" id="activityEndTime"></div>
+                
+                <h3 style="margin-top: 2rem; margin-bottom: 1rem;">Lampiran Dokumen</h3>
+                <div class="upload-zone" onclick="document.getElementById('fileInput').click()">
+                    <div class="upload-icon">📸</div><div class="upload-text">Pilih foto/dokumen</div>
+                    <div class="upload-hint">Format: JPG, PNG, PDF (Nama file akan tersimpan di sistem)</div>
+                </div>
+                <input type="file" id="fileInput" onchange="handleFileSelect(event)">
+                <div class="file-list" id="fileList"></div>
+
+                <div class="btn-group" style="margin-top: 2rem;">
+                    <button class="btn btn-primary" onclick="saveActivity()">Simpan Aktivitas</button>
+                    <button class="btn btn-secondary" onclick="resetActivityForm()">Reset</button>
+                </div>
+
+                <h3 style="margin-top: 2rem; margin-bottom: 1rem;">Riwayat Aktivitas</h3>
+                <div class="activity-list" id="activityList"><p style="text-align: center; color: #666; padding: 2rem;">Belum ada aktivitas</p></div>
+            </div>
+
+            <div class="tab-content" id="laporan">
+                <h2 style="margin-bottom: 1.5rem;">Laporan & Permohonan Izin</h2>
+                <div class="form-group"><label>Nama Siswa</label><input type="text" id="reportStudentName" placeholder="Masukkan nama lengkap Anda"></div>
+                <div class="form-group"><label>Tipe Laporan</label>
+                    <select id="reportType">
+                        <option value="">Pilih tipe laporan</option>
+                        <option value="izin_tidak_hadir">Permohonan Izin Tidak Hadir</option>
+                        <option value="cuti">Permohonan Cuti</option>
+                        <option value="sakit">Pemberitahuan Sakit</option>
+                        <option value="lainnya">Laporan Lainnya</option>
+                    </select>
+                </div>
+                <div class="form-group"><label>Tanggal Kejadian</label><input type="date" id="reportDate"></div>
+                <div class="form-group"><label>Keterangan/Alasan</label><textarea id="reportReason" placeholder="Jelaskan alasan Anda..."></textarea></div>
+                <div class="form-group"><label>Durasi (hari)</label><input type="number" id="reportDuration" min="1" placeholder="Berapa hari?"></div>
+                
+                <div class="btn-group">
+                    <button class="btn btn-primary" onclick="submitReport()">Ajukan Laporan</button>
+                    <button class="btn btn-secondary" onclick="resetReportForm()">Reset</button>
+                </div>
+
+                <h3 style="margin-top: 2rem; margin-bottom: 1rem;">Riwayat Laporan</h3>
+                <table class="report-table">
+                    <thead>
+                        <tr>
+                            <th>Tanggal</th>
+                            <th>Nama Siswa</th>
+                            <th>Tipe</th>
+                            <th>Status</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="reportTableBody">
+                        <tr><td colspan="5" style="text-align: center; padding: 2rem;">Belum ada laporan</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzFWhJRqW6pN1XIOm06EYAPK17Ej5InpIA8jDv2cALdNxnYGiiEY_VknjafKF5I0iym/exec';
+
+        function sendDataToSheet(data, action) {
+            const formData = new FormData();
+            formData.append('action', action);
+            for (const key in data) {
+                if (typeof data[key] === 'object' && data[key] !== null) formData.append(key, JSON.stringify(data[key]));
+                else formData.append(key, data[key] || '');
+            }
+            fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: formData })
+            .catch(error => console.error('Gagal mengirim data!', error));
+        }
+
+        let appData = { attendances: [], activities: [], reports: [], files: [] };
+
+        function loadData() {
+            const saved = localStorage.getItem('presensiData');
+            if (saved) appData = { ...appData, ...JSON.parse(saved) };
+            updateDashboard();
+        }
+
+        function saveData() { localStorage.setItem('presensiData', JSON.stringify(appData)); }
+        
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-tab').forEach(el => el.classList.remove('active'));
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        function resetPresensiForm() {
+            document.getElementById('studentName').value = '';
+            document.getElementById('studentId').value = '';
+            document.getElementById('program').value = '';
+        }
+
+        function checkIn() {
+            const name = document.getElementById('studentName').value;
+            const id = document.getElementById('studentId').value;
+            const program = document.getElementById('program').value;
+            if (!name || !id || !program) return showToast('Harap isi semua data siswa', 'error');
+
+            const attendance = { date: new Date().toLocaleDateString('id-ID'), name, id, program, checkinTime: new Date().toLocaleTimeString('id-ID'), checkoutTime: null, type: 'checkin' };
+            appData.attendances.push(attendance); 
+            sendDataToSheet(attendance, 'presensi'); 
+            saveData(); 
+            updateDashboard();
+            showToast('Absensi datang berhasil dicatat!', 'success'); 
+            resetPresensiForm();
+        }
+
+        function checkOut() {
+            const name = document.getElementById('studentName').value;
+            const id = document.getElementById('studentId').value;
+            const program = document.getElementById('program').value;
+            
+            if (!name || !id) return showToast('Harap isi nama dan sekolah/NIM', 'error');
+
+            const attendance = { date: new Date().toLocaleDateString('id-ID'), name, id, program, checkoutTime: new Date().toLocaleTimeString('id-ID'), type: 'checkout' };
+            appData.attendances.push(attendance); 
+            sendDataToSheet(attendance, 'presensi'); 
+            saveData(); 
+            updateDashboard();
+            showToast('Absensi pulang berhasil dicatat!', 'success'); 
+            resetPresensiForm();
+        }
+
+        function saveActivity() {
+            const studentName = document.getElementById('activityStudentName').value;
+            const name = document.getElementById('activityName').value;
+            const desc = document.getElementById('activityDescription').value;
+            const date = document.getElementById('activityDate').value;
+            const start = document.getElementById('activityStartTime').value;
+            const end = document.getElementById('activityEndTime').value;
+
+            if (!studentName || !name || !desc || !date || !start || !end) return showToast('Harap isi semua data kegiatan', 'error');
+
+            const activity = { id: Date.now(), studentName, name, description: desc, date, startTime: start, endTime: end, files: appData.files, createdAt: new Date().toLocaleString('id-ID') };
+            appData.activities.push(activity); 
+            sendDataToSheet(activity, 'aktivitas');
+            
+            appData.files = []; 
+            saveData(); 
+            showToast('Aktivitas berhasil disimpan!', 'success');
+            resetActivityForm(); 
+            updateActivityList(); 
+            updateDashboard();
+        }
+
+        function resetActivityForm() {
+            document.getElementById('activityStudentName').value = '';
+            document.getElementById('activityName').value = ''; 
+            document.getElementById('activityDescription').value = '';
+            document.getElementById('fileList').innerHTML = ''; 
+            appData.files = []; 
+            setTodayDate();
+        }
+
+        function handleFileSelect(event) {
+            const files = event.target.files;
+            const fileList = document.getElementById('fileList');
+            
+            for (let file of files) {
+                if (file.size > 5 * 1024 * 1024) {
+                    showToast('File terlalu besar (max 5MB)', 'error');
+                    continue;
+                }
+
+                const fileInfo = { name: file.name, size: (file.size / 1024 / 1024).toFixed(2) + ' MB' };
+                appData.files.push(fileInfo);
+                
+                const fileItem = document.createElement('div');
+                fileItem.className = 'file-item';
+                fileItem.innerHTML = `
+                    <div class="file-name">📄 ${file.name}</div>
+                    <div style="display: flex; align-items: center;">
+                        <span class="file-size">${fileInfo.size}</span>
+                        <button class="btn-small btn-small-danger" onclick="removeFile('${file.name}')" style="margin-left: 0.5rem;">Hapus</button>
+                    </div>
+                `;
+                fileList.appendChild(fileItem);
+            }
+            event.target.value = '';
+        }
+
+        function removeFile(fileName) {
+            appData.files = appData.files.filter(f => f.name !== fileName);
+            const fileList = document.getElementById('fileList');
+            fileList.innerHTML = '';
+            appData.files.forEach(file => {
+                const fileItem = document.createElement('div');
+                fileItem.className = 'file-item';
+                fileItem.innerHTML = `
+                    <div class="file-name">📄 ${file.name}</div>
+                    <div style="display: flex; align-items: center;">
+                        <span class="file-size">${file.size}</span>
+                        <button class="btn-small btn-small-danger" onclick="removeFile('${file.name}')" style="margin-left: 0.5rem;">Hapus</button>
+                    </div>
+                `;
+                fileList.appendChild(fileItem);
+            });
+        }
+
+        function submitReport() {
+            const studentName = document.getElementById('reportStudentName').value;
+            const type = document.getElementById('reportType').value;
+            const date = document.getElementById('reportDate').value;
+            const reason = document.getElementById('reportReason').value;
+            const duration = document.getElementById('reportDuration').value;
+
+            if (!studentName || !type || !date || !reason || !duration) return showToast('Harap isi semua data laporan', 'error');
+
+            const report = { id: Date.now(), studentName, date, type, reason, duration, status: 'Menunggu Persetujuan', createdAt: new Date().toLocaleDateString('id-ID') };
+            appData.reports.push(report); 
+            sendDataToSheet(report, 'laporan'); 
+            saveData();
+            showToast('Laporan berhasil diajukan!', 'success'); 
+            resetReportForm(); 
+            updateReportTable();
+        }
+
+        function resetReportForm() {
+            document.getElementById('reportStudentName').value = '';
+            document.getElementById('reportType').value = ''; 
+            document.getElementById('reportReason').value = '';
+            document.getElementById('reportDuration').value = ''; 
+            setTodayDate();
+        }
+
+        function cetakPDF(tipe, id) {
+            let dataSurat, judulSurat;
+            if (tipe === 'laporan') {
+                dataSurat = appData.reports.find(r => r.id === id);
+                judulSurat = dataSurat.type === 'izin_tidak_hadir' ? 'SURAT IZIN TIDAK HADIR' : dataSurat.type === 'cuti' ? 'SURAT PERMOHONAN CUTI' : 'SURAT PEMBERITAHUAN MAGANG';
+            } else {
+                dataSurat = appData.activities.find(a => a.id === id);
+                judulSurat = 'LAPORAN AKTIVITAS HARIAN MAGANG';
+            }
+
+            if (!dataSurat) return showToast('Data tidak ditemukan', 'error');
+
+            const namaSiswa = dataSurat.studentName || '........................................';
+
+            const isiKonten = tipe === 'laporan' ? `
+                <tr><td width="150">Nama Siswa</td><td>: <b>${namaSiswa}</b></td></tr>
+                <tr><td>Tanggal Kejadian</td><td>: ${dataSurat.date}</td></tr>
+                <tr><td>Durasi</td><td>: ${dataSurat.duration} Hari</td></tr>
+                <tr><td>Keterangan</td><td>: ${dataSurat.reason}</td></tr>
+                <tr><td>Status</td><td>: ${dataSurat.status}</td></tr>
+            ` : `
+                <tr><td width="150">Nama Siswa</td><td>: <b>${namaSiswa}</b></td></tr>
+                <tr><td>Nama Kegiatan</td><td>: ${dataSurat.name}</td></tr>
+                <tr><td>Tanggal Pelaksanaan</td><td>: ${dataSurat.date}</td></tr>
+                <tr><td>Waktu</td><td>: ${dataSurat.startTime} s/d ${dataSurat.endTime}</td></tr>
+                <tr><td>Deskripsi</td><td>: ${dataSurat.description}</td></tr>
+                <tr><td>Lampiran (Di Sistem)</td><td>: ${dataSurat.files.length > 0 ? dataSurat.files.map(f => f.name).join(', ') : 'Tidak ada lampiran'}</td></tr>
+            `;
+
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(`
+                <html>
+                <head>
+                    <title>Cetak Dokumen</title>
+                    <style>
+                        body { font-family: 'Times New Roman', Times, serif; padding: 40px; line-height: 1.6; }
+                        .header { text-align: center; border-bottom: 3px solid black; padding-bottom: 10px; margin-bottom: 20px; }
+                        .header h2 { margin: 0; }
+                        .title { text-align: center; font-weight: bold; text-decoration: underline; margin-bottom: 20px; font-size: 18px;}
+                        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+                        td { padding: 8px 0; vertical-align: top; }
+                        .signature { margin-top: 50px; float: right; text-align: center; width: 250px;}
+                    </style>
+                </head>
+                <body>
+                    <div class="header">
+                        <h2>UNIVERSITAS MUHAMMADIYAH KUPANG</h2>
+                        <p>Sistem Pencatatan Kegiatan Mahasiswa Magang</p>
+                    </div>
+                    <div class="title">${judulSurat}</div>
+                    <p>Dengan hormat,</p>
+                    <p>Melalui surat ini, menerangkan rincian data sebagai berikut:</p>
+                    <table>${isiKonten}</table>
+                    <p style="margin-top:20px;">Demikian laporan ini dibuat dengan sebenarnya untuk dapat dipergunakan sebagaimana mestinya.</p>
+                    <div class="signature">
+                        <p>Kupang, ${new Date().toLocaleDateString('id-ID')}</p>
+                        <br><br><br>
+                        <p>( <b>${namaSiswa}</b> )<br>Mahasiswa Magang</p>
+                    </div>
+                    <script>window.onload = function() { window.print(); window.close(); }<\/script>
+                </body>
+                </html>
+            `);
+            printWindow.document.close();
+        }
+
+        function updateActivityList() {
+            const container = document.getElementById('activityList');
+            if (appData.activities.length === 0) return container.innerHTML = '<p style="text-align: center; color: #666; padding: 2rem;">Belum ada aktivitas</p>';
+
+            container.innerHTML = [...appData.activities].reverse().map(a => `
+                <div class="activity-card">
+                    <div class="activity-info">
+                        <h3>${a.name}</h3><p>👤 ${a.studentName || '-'} | 📅 ${a.date} | ⏰ ${a.startTime} - ${a.endTime}</p><p>${a.description}</p>
+                        <p><span class="badge badge-success">${a.files.length} file</span></p>
+                    </div>
+                    <div class="activity-action">
+                        <button class="btn-small btn-small-info" onclick="cetakPDF('aktivitas', ${a.id})">🖨️ Cetak PDF</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function updateReportTable() {
+            const tbody = document.getElementById('reportTableBody');
+            if (appData.reports.length === 0) return tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 2rem;">Belum ada laporan</td></tr>';
+
+            tbody.innerHTML = [...appData.reports].reverse().map(r => `
+                <tr>
+                    <td>${r.createdAt}</td>
+                    <td><strong>${r.studentName || '-'}</strong></td>
+                    <td>${r.type.replace('_', ' ').toUpperCase()}</td>
+                    <td><span class="badge badge-warning">${r.status}</span></td>
+                    <td><button class="btn-small btn-small-info" onclick="cetakPDF('laporan', ${r.id})">🖨️ Cetak PDF</button></td>
+                </tr>
+            `).join('');
+        }
+
+        function updateAttendanceHistory() {
+            const container = document.getElementById('attendanceHistory');
+            const todayAttendances = appData.attendances.filter(a => a.date === new Date().toLocaleDateString('id-ID'));
+            if (todayAttendances.length === 0) return container.innerHTML = '<p style="text-align: center; padding: 2rem;">Belum ada riwayat</p>';
+
+            container.innerHTML = `<table class="report-table"><thead><tr><th>Nama</th><th>Jurusan</th><th>Waktu</th><th>Tipe</th></tr></thead><tbody>
+                ${todayAttendances.map(a => `<tr><td>${a.name}</td><td>${a.program || '-'}</td><td>${a.checkinTime || a.checkoutTime}</td><td><span class="badge badge-info">${a.type === 'checkin' ? 'Datang' : 'Pulang'}</span></td></tr>`).join('')}
+            </tbody></table>`;
+        }
+
+        function updateDashboard() {
+            const today = new Date().toLocaleDateString('id-ID');
+            const todayAttendances = appData.attendances.filter(a => a.date === today);
+
+            document.getElementById('totalHadirStat').textContent = new Set(appData.attendances.map(a => a.date)).size;
+            document.getElementById('totalAktivitasStat').textContent = appData.activities.length;
+            
+            document.getElementById('checkinTime').textContent = '--:--';
+            document.getElementById('checkinStatus').textContent = 'Belum absen datang';
+            document.getElementById('checkoutTime').textContent = '--:--';
+            document.getElementById('checkoutStatus').textContent = 'Belum absen pulang';
+            document.getElementById('checkoutIcon').innerHTML = '-';
+            document.getElementById('checkoutIcon').className = 'status-icon warning';
+
+            if (todayAttendances.some(a => a.type === 'checkin')) {
+                const checkin = todayAttendances.find(a => a.type === 'checkin');
+                document.getElementById('checkinTime').textContent = checkin.checkinTime;
+                document.getElementById('checkinStatus').textContent = 'Sudah absen datang';
+            }
+
+            if (todayAttendances.some(a => a.type === 'checkout')) {
+                const checkout = todayAttendances.find(a => a.type === 'checkout');
+                document.getElementById('checkoutTime').textContent = checkout.checkoutTime;
+                document.getElementById('checkoutStatus').textContent = 'Sudah absen pulang';
+                document.getElementById('checkoutIcon').innerHTML = '✓';
+                document.getElementById('checkoutIcon').className = 'status-icon success';
+            }
+
+            updateAttendanceHistory();
+        }
+
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div'); toast.className = `toast toast-${type}`; toast.textContent = message;
+            document.body.appendChild(toast); setTimeout(() => toast.remove(), 3000);
+        }
+
+        function setTodayDate() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('activityDate').value = today; document.getElementById('reportDate').value = today;
+        }
+
+        window.addEventListener('load', () => { loadData(); setTodayDate(); updateActivityList(); updateReportTable(); });
+    </script>
+</body>
+</html>
