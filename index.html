@@ -3,194 +3,1350 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem Presensi Magang</title>
+    <title>Sistem Presensi Magang - UMKoe</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-light: #818cf8;
+            --primary-dark: #3730a3;
+            --primary-bg: #eef2ff;
+            --success: #10b981;
+            --success-bg: #ecfdf5;
+            --warning: #f59e0b;
+            --warning-bg: #fffbeb;
+            --danger: #ef4444;
+            --danger-bg: #fef2f2;
+            --info: #3b82f6;
+            --info-bg: #eff6ff;
+            --gray-50: #f8fafc;
+            --gray-100: #f1f5f9;
+            --gray-200: #e2e8f0;
+            --gray-300: #cbd5e1;
+            --gray-400: #94a3b8;
+            --gray-500: #64748b;
+            --gray-600: #475569;
+            --gray-700: #334155;
+            --gray-800: #1e293b;
+            --gray-900: #0f172a;
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 20px;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.04), 0 1px 3px rgba(0,0,0,0.06);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.07), 0 2px 4px -2px rgba(0,0,0,0.05);
+            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.08), 0 4px 6px -4px rgba(0,0,0,0.04);
+            --shadow-xl: 0 20px 25px -5px rgba(0,0,0,0.08), 0 8px 10px -6px rgba(0,0,0,0.04);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background: var(--surface-0, #f5f5f5); color: var(--text-primary, #1a1a1a); }
-        .container { max-width: 1200px; margin: 0 auto; padding: 1rem; }
-        .header { background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%); color: white; padding: 2rem 1rem; border-radius: 12px; margin-bottom: 2rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        .header h1 { font-size: 28px; margin-bottom: 0.5rem; }
-        .header p { font-size: 14px; opacity: 0.95; }
-        .nav-tabs { display: flex; gap: 0.5rem; margin-bottom: 2rem; border-bottom: 2px solid #e5e5e5; overflow-x: auto; }
-        .nav-tab { padding: 1rem; background: none; border: none; border-bottom: 3px solid transparent; cursor: pointer; font-size: 15px; font-weight: 500; color: var(--text-secondary, #666); white-space: nowrap; transition: all 0.3s ease; }
-        .nav-tab.active { color: #1e40af; border-bottom-color: #1e40af; }
-        .nav-tab:hover { color: var(--text-primary, #1a1a1a); }
-        .content { background: var(--surface-2, white); border-radius: 12px; padding: 2rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-        .tab-content { display: none; }
-        .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .form-group { margin-bottom: 1.5rem; }
-        .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 500; font-size: 14px; }
-        .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; font-family: inherit; }
-        .form-group textarea { resize: vertical; min-height: 100px; }
-        .btn-group { display: flex; gap: 1rem; margin-top: 1.5rem; }
-        .btn { padding: 0.75rem 1.5rem; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; flex: 1; text-align: center; }
-        .btn-primary { background: #1e40af; color: white; }
-        .btn-secondary { background: #f3f4f6; border: 1px solid #ddd; }
-        .btn-success { background: #10b981; color: white; }
-        .attendance-status { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 2rem; }
-        .status-card { background: #f9fafb; padding: 1.5rem; border-radius: 8px; text-align: center; border: 1px solid #e5e7eb; }
-        .status-label { font-size: 12px; color: #666; margin-bottom: 0.5rem; text-transform: uppercase; }
-        .status-time { font-size: 24px; font-weight: 700; color: #1e40af; }
-        .status-icon { font-size: 32px; margin-bottom: 0.5rem; }
-        .success { color: #10b981; } .warning { color: #f59e0b; }
-        .activity-list { display: flex; flex-direction: column; gap: 1rem; }
-        .activity-card { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 1rem; display: flex; justify-content: space-between; align-items: start; }
-        .activity-info h3 { font-size: 15px; margin-bottom: 0.5rem; }
-        .activity-info p { font-size: 12px; color: #666; margin: 0.25rem 0; }
-        .activity-action { display: flex; gap: 0.5rem; flex-direction: column; }
-        .btn-small { padding: 0.5rem 1rem; font-size: 12px; border-radius: 6px; border: none; cursor: pointer; }
-        .btn-small-danger { background: #fee2e2; color: #991b1b; }
-        .btn-small-info { background: #dbeafe; color: #1e40af; font-weight: bold;}
-        .upload-zone { border: 2px dashed #bfdbfe; border-radius: 8px; padding: 2rem; text-align: center; background: #eff6ff; cursor: pointer; margin: 1.5rem 0; }
-        .upload-icon { font-size: 32px; margin-bottom: 0.5rem; }
-        .upload-text { font-size: 14px; margin-bottom: 0.25rem; }
-        .upload-hint { font-size: 12px; color: #666; }
+
+        body {
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #f0f4ff 0%, #faf5ff 50%, #fff1f2 100%);
+            min-height: 100vh;
+            color: var(--gray-800);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ===== HEADER ===== */
+        .header {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #a855f7 100%);
+            color: white;
+            padding: 2rem 1.5rem;
+            border-radius: 0 0 var(--radius-xl) var(--radius-xl);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 40px -10px rgba(79, 70, 229, 0.4);
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: float 8s ease-in-out infinite;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -10%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite reverse;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-20px) scale(1.05); }
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .header-left { display: flex; align-items: center; gap: 1rem; }
+
+        .header-logo {
+            width: 52px;
+            height: 52px;
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(255,255,255,0.25);
+            flex-shrink: 0;
+        }
+
+        .header-logo svg { width: 28px; height: 28px; }
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            line-height: 1.2;
+        }
+
+        .header p {
+            font-size: 13px;
+            opacity: 0.85;
+            font-weight: 400;
+            margin-top: 2px;
+        }
+
+        .header-clock {
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            padding: 0.6rem 1.2rem;
+            border-radius: var(--radius-lg);
+            text-align: center;
+            min-width: 140px;
+        }
+
+        .header-clock .time {
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            display: block;
+        }
+
+        .header-clock .date {
+            font-size: 11px;
+            opacity: 0.8;
+            font-weight: 400;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* ===== NAVIGATION ===== */
+        .container { max-width: 1200px; margin: 0 auto; padding: 1.5rem 1rem 3rem; }
+
+        .nav-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            background: white;
+            padding: 6px;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .nav-tabs::-webkit-scrollbar { height: 0; }
+
+        .nav-tab {
+            padding: 0.85rem 1.5rem;
+            background: transparent;
+            border: none;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--gray-500);
+            white-space: nowrap;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            flex: 1;
+            justify-content: center;
+            position: relative;
+            font-family: inherit;
+        }
+
+        .nav-tab svg { width: 18px; height: 18px; flex-shrink: 0; opacity: 0.6; transition: var(--transition); }
+
+        .nav-tab:hover {
+            color: var(--gray-700);
+            background: var(--gray-50);
+        }
+
+        .nav-tab:hover svg { opacity: 0.8; }
+
+        .nav-tab.active {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 12px -2px rgba(79, 70, 229, 0.4);
+        }
+
+        .nav-tab.active svg { opacity: 1; }
+
+        /* ===== CONTENT ===== */
+        .content {
+            background: white;
+            border-radius: var(--radius-xl);
+            padding: 2rem;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid rgba(0,0,0,0.04);
+        }
+
+        .tab-content {
+            display: none;
+            animation: tabFadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .tab-content.active { display: block; }
+
+        @keyframes tabFadeIn {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 0.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .section-title svg { width: 24px; height: 24px; color: var(--primary); }
+
+        .section-subtitle {
+            font-size: 14px;
+            color: var(--gray-400);
+            margin-bottom: 1.75rem;
+            font-weight: 400;
+        }
+
+        /* ===== STAT CARDS ===== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-box {
+            padding: 1.5rem;
+            border-radius: var(--radius-lg);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            transition: var(--transition);
+            border: 1px solid transparent;
+        }
+
+        .stat-box:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .stat-box.primary-stat {
+            background: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 100%);
+            border-color: #c7d2fe;
+        }
+
+        .stat-box.success-stat {
+            background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+            border-color: #a7f3d0;
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 0.75rem;
+        }
+
+        .primary-stat .stat-icon { background: var(--primary); color: white; }
+        .success-stat .stat-icon { background: var(--success); color: white; }
+
+        .stat-icon svg { width: 24px; height: 24px; }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--gray-900);
+            line-height: 1;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: var(--gray-500);
+            font-weight: 500;
+        }
+
+        /* ===== STATUS CARDS ===== */
+        .attendance-status {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .status-card {
+            padding: 1.5rem;
+            border-radius: var(--radius-lg);
+            text-align: center;
+            border: 2px solid var(--gray-100);
+            background: white;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .status-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--gray-200);
+            transition: var(--transition);
+        }
+
+        .status-card.checked-in::before { background: linear-gradient(90deg, var(--success), #34d399); }
+        .status-card.checked-out::before { background: linear-gradient(90deg, var(--warning), #fbbf24); }
+
+        .status-card:hover {
+            border-color: var(--gray-200);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .status-label {
+            font-size: 11px;
+            color: var(--gray-400);
+            margin-bottom: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        .status-icon-wrap {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 0.75rem;
+            font-size: 24px;
+            transition: var(--transition);
+        }
+
+        .status-icon-wrap.pending {
+            background: var(--gray-100);
+            color: var(--gray-400);
+        }
+
+        .status-icon-wrap.done {
+            background: var(--success-bg);
+            color: var(--success);
+            animation: scaleIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .status-icon-wrap.done svg { width: 28px; height: 28px; }
+
+        @keyframes scaleIn {
+            from { transform: scale(0); }
+            to { transform: scale(1); }
+        }
+
+        .status-time {
+            font-size: 26px;
+            font-weight: 800;
+            color: var(--gray-900);
+            font-variant-numeric: tabular-nums;
+        }
+
+        .status-text {
+            font-size: 12px;
+            color: var(--gray-400);
+            margin-top: 0.5rem;
+            font-weight: 500;
+        }
+
+        .status-text.active { color: var(--success); }
+
+        /* ===== FORMS ===== */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.25rem;
+        }
+
+        .form-group { position: relative; }
+
+        .form-group.full-width { grid-column: 1 / -1; }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            font-size: 13px;
+            color: var(--gray-700);
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 0.85rem 1rem;
+            border: 2px solid var(--gray-200);
+            border-radius: var(--radius-md);
+            font-size: 14px;
+            font-family: inherit;
+            color: var(--gray-800);
+            background: white;
+            transition: var(--transition);
+            outline: none;
+        }
+
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: var(--gray-400);
+        }
+
+        .form-group input:hover,
+        .form-group textarea:hover,
+        .form-group select:hover {
+            border-color: var(--gray-300);
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 110px;
+        }
+
+        .form-group select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            padding-right: 2.5rem;
+            cursor: pointer;
+        }
+
+        .form-hint {
+            font-size: 11px;
+            color: var(--gray-400);
+            margin-top: 0.35rem;
+        }
+
+        /* ===== BUTTONS ===== */
+        .btn-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.75rem;
+        }
+
+        .btn {
+            padding: 0.85rem 1.75rem;
+            border: none;
+            border-radius: var(--radius-md);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            flex: 1;
+            text-align: center;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            font-family: inherit;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn svg { width: 18px; height: 18px; flex-shrink: 0; }
+
+        .btn::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(255,255,255,0);
+            transition: var(--transition);
+        }
+
+        .btn:hover::after { background: rgba(255,255,255,0.1); }
+
+        .btn:active { transform: scale(0.98); }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            box-shadow: 0 4px 12px -2px rgba(79, 70, 229, 0.35);
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 6px 20px -2px rgba(79, 70, 229, 0.5);
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: var(--gray-100);
+            color: var(--gray-600);
+            border: 2px solid var(--gray-200);
+        }
+
+        .btn-secondary:hover {
+            background: var(--gray-200);
+            border-color: var(--gray-300);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            box-shadow: 0 4px 12px -2px rgba(16, 185, 129, 0.35);
+        }
+
+        .btn-success:hover {
+            box-shadow: 0 6px 20px -2px rgba(16, 185, 129, 0.5);
+            transform: translateY(-1px);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+            box-shadow: 0 4px 12px -2px rgba(239, 68, 68, 0.35);
+        }
+
+        .btn-danger:hover {
+            box-shadow: 0 6px 20px -2px rgba(239, 68, 68, 0.5);
+            transform: translateY(-1px);
+        }
+
+        .btn-outline-danger {
+            background: var(--danger-bg);
+            color: var(--danger);
+            border: 1.5px solid #fecaca;
+        }
+
+        .btn-outline-danger:hover {
+            background: #fee2e2;
+            border-color: #fca5a5;
+        }
+
+        .btn-outline-info {
+            background: var(--info-bg);
+            color: var(--primary);
+            border: 1.5px solid #c7d2fe;
+            font-weight: 600;
+        }
+
+        .btn-outline-info:hover {
+            background: #e0e7ff;
+            border-color: #a5b4fc;
+        }
+
+        .btn.loading {
+            pointer-events: none;
+            opacity: 0.8;
+        }
+
+        .btn .spinner {
+            display: none;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+        }
+
+        .btn.loading .spinner { display: block; }
+        .btn.loading .btn-text { opacity: 0.7; }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .btn-small {
+            padding: 0.55rem 1rem;
+            font-size: 12px;
+            border-radius: var(--radius-sm);
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            font-family: inherit;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .btn-small svg { width: 14px; height: 14px; }
+
+        .btn-small:hover { transform: translateY(-1px); }
+        .btn-small:active { transform: scale(0.97); }
+
+        /* ===== UPLOAD ZONE ===== */
+        .upload-zone {
+            border: 2px dashed var(--gray-300);
+            border-radius: var(--radius-lg);
+            padding: 2.5rem 2rem;
+            text-align: center;
+            background: var(--gray-50);
+            cursor: pointer;
+            margin: 1.5rem 0;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .upload-zone:hover,
+        .upload-zone.dragover {
+            border-color: var(--primary-light);
+            background: var(--primary-bg);
+            transform: scale(1.005);
+        }
+
+        .upload-zone.dragover {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
+        }
+
+        .upload-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background: var(--primary-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 0.75rem;
+            transition: var(--transition);
+        }
+
+        .upload-zone:hover .upload-icon,
+        .upload-zone.dragover .upload-icon {
+            background: var(--primary);
+        }
+
+        .upload-zone:hover .upload-icon svg,
+        .upload-zone.dragover .upload-icon svg {
+            color: white;
+        }
+
+        .upload-icon svg { width: 24px; height: 24px; color: var(--primary); transition: var(--transition); }
+
+        .upload-text { font-size: 14px; font-weight: 600; color: var(--gray-700); margin-bottom: 0.25rem; }
+
+        .upload-hint { font-size: 12px; color: var(--gray-400); }
+
+        .upload-browse {
+            color: var(--primary);
+            font-weight: 600;
+            text-decoration: underline;
+            text-underline-offset: 2px;
+        }
+
         #fileInput { display: none; }
-        .file-list { margin-top: 1rem; }
-        .file-item { background: white; padding: 0.75rem; border-radius: 6px; border: 1px solid #e5e7eb; display: flex; justify-content: space-between; align-items: center; font-size: 13px; margin-bottom: 0.5rem; }
-        .badge { display: inline-block; padding: 0.25rem 0.75rem; border-radius: 999px; font-size: 11px; font-weight: 600; text-transform: uppercase; }
-        .badge-info { background: #dbeafe; color: #1e40af; }
-        .badge-success { background: #dcfce7; color: #166534; }
-        .badge-warning { background: #fef3c7; color: #92400e; }
-        .report-table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
-        .report-table th { background: #f3f4f6; padding: 0.75rem; text-align: left; font-size: 13px; border-bottom: 2px solid #e5e7eb;}
-        .report-table td { padding: 0.75rem; border-bottom: 1px solid #e5e7eb; font-size: 13px; }
-        .toast { position: fixed; bottom: 2rem; right: 2rem; padding: 1rem 1.5rem; border-radius: 8px; color: white; font-size: 14px; animation: slideIn 0.3s ease; z-index: 1000; }
-        .toast-success { background: #10b981; } .toast-error { background: #ef4444; }
-        @keyframes slideIn { from { transform: translateX(400px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 2rem; }
-        .stat-box { background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%); padding: 1.5rem; border-radius: 8px; text-align: center; }
-        .stat-value { font-size: 28px; font-weight: 700; color: #1e40af; }
-        .stat-label { font-size: 13px; color: #666; }
-        @media (max-width: 768px) { .attendance-status, .stats-grid { grid-template-columns: 1fr; } .btn-group { flex-direction: column; } .nav-tab { padding: 0.75rem 1rem; font-size: 13px; } }
+
+        .file-list { margin-top: 1rem; display: flex; flex-direction: column; gap: 0.5rem; }
+
+        .file-item {
+            background: white;
+            padding: 0.85rem 1rem;
+            border-radius: var(--radius-md);
+            border: 1.5px solid var(--gray-200);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+            animation: slideUp 0.3s ease;
+            transition: var(--transition);
+        }
+
+        .file-item:hover { border-color: var(--gray-300); box-shadow: var(--shadow-sm); }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .file-name {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            color: var(--gray-700);
+        }
+
+        .file-name svg { width: 18px; height: 18px; color: var(--gray-400); }
+
+        .file-size { font-size: 12px; color: var(--gray-400); margin-right: 0.5rem; }
+
+        /* ===== BADGES ===== */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            padding: 0.3rem 0.75rem;
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+        }
+
+        .badge svg { width: 12px; height: 12px; }
+
+        .badge-info { background: var(--info-bg); color: #1d4ed8; }
+        .badge-success { background: var(--success-bg); color: #047857; }
+        .badge-warning { background: var(--warning-bg); color: #b45309; }
+        .badge-danger { background: var(--danger-bg); color: #dc2626; }
+
+        /* ===== ACTIVITY CARDS ===== */
+        .activity-list { display: flex; flex-direction: column; gap: 0.75rem; }
+
+        .activity-card {
+            background: white;
+            border: 1.5px solid var(--gray-200);
+            border-radius: var(--radius-lg);
+            padding: 1.25rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            gap: 1rem;
+            transition: var(--transition);
+            animation: slideUp 0.3s ease;
+        }
+
+        .activity-card:hover {
+            border-color: var(--primary-light);
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+
+        .activity-info h3 { font-size: 15px; font-weight: 700; color: var(--gray-800); margin-bottom: 0.5rem; }
+
+        .activity-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .activity-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+            font-size: 12px;
+            color: var(--gray-500);
+        }
+
+        .activity-meta-item svg { width: 14px; height: 14px; color: var(--gray-400); }
+
+        .activity-desc {
+            font-size: 13px;
+            color: var(--gray-500);
+            line-height: 1.5;
+            margin-bottom: 0.75rem;
+        }
+
+        .activity-action {
+            display: flex;
+            gap: 0.5rem;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+
+        /* ===== TABLE ===== */
+        .table-wrapper {
+            overflow-x: auto;
+            border-radius: var(--radius-lg);
+            border: 1.5px solid var(--gray-200);
+        }
+
+        .report-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .report-table thead { background: var(--gray-50); }
+
+        .report-table th {
+            padding: 0.85rem 1rem;
+            text-align: left;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--gray-500);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid var(--gray-200);
+            white-space: nowrap;
+        }
+
+        .report-table td {
+            padding: 0.85rem 1rem;
+            border-bottom: 1px solid var(--gray-100);
+            font-size: 13px;
+            color: var(--gray-700);
+            vertical-align: middle;
+        }
+
+        .report-table tbody tr {
+            transition: var(--transition);
+        }
+
+        .report-table tbody tr:hover {
+            background: var(--gray-50);
+        }
+
+        .report-table tbody tr:last-child td { border-bottom: none; }
+
+        .report-table td strong { color: var(--gray-900); }
+
+        /* ===== TOAST ===== */
+        .toast-container {
+            position: fixed;
+            bottom: 1.5rem;
+            right: 1.5rem;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column-reverse;
+            gap: 0.75rem;
+        }
+
+        .toast {
+            padding: 0.85rem 1.25rem;
+            border-radius: var(--radius-md);
+            color: white;
+            font-size: 14px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            animation: toastIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: var(--shadow-xl);
+            min-width: 280px;
+            max-width: 420px;
+            position: relative;
+            overflow: hidden;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        .toast svg { width: 20px; height: 20px; flex-shrink: 0; }
+
+        .toast-success { background: linear-gradient(135deg, #10b981 0%, #059669 100%); }
+        .toast-error { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); }
+
+        .toast-progress {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 3px;
+            background: rgba(255,255,255,0.4);
+            animation: toastProgress 3s linear forwards;
+        }
+
+        @keyframes toastIn {
+            from { transform: translateX(100%) scale(0.8); opacity: 0; }
+            to { transform: translateX(0) scale(1); opacity: 1; }
+        }
+
+        @keyframes toastProgress {
+            from { width: 100%; }
+            to { width: 0%; }
+        }
+
+        .toast.removing {
+            animation: toastOut 0.3s ease forwards;
+        }
+
+        @keyframes toastOut {
+            to { transform: translateX(120%); opacity: 0; }
+        }
+
+        /* ===== CONFIRM MODAL ===== */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 8000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            animation: fadeIn 0.2s ease;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .modal-box {
+            background: white;
+            border-radius: var(--radius-xl);
+            padding: 2rem;
+            max-width: 400px;
+            width: 100%;
+            box-shadow: var(--shadow-xl);
+            transform: scale(0.9);
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-align: center;
+        }
+
+        .modal-overlay.active .modal-box { transform: scale(1); }
+
+        .modal-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+        }
+
+        .modal-icon.warn { background: var(--warning-bg); color: var(--warning); }
+        .modal-icon.info { background: var(--info-bg); color: var(--info); }
+
+        .modal-icon svg { width: 28px; height: 28px; }
+
+        .modal-title { font-size: 18px; font-weight: 700; color: var(--gray-900); margin-bottom: 0.5rem; }
+        .modal-message { font-size: 14px; color: var(--gray-500); margin-bottom: 1.5rem; line-height: 1.6; }
+
+        .modal-actions { display: flex; gap: 0.75rem; }
+        .modal-actions .btn { flex: 1; }
+
+        /* ===== EMPTY STATE ===== */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: var(--gray-400);
+        }
+
+        .empty-state-icon {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            background: var(--gray-100);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+        }
+
+        .empty-state-icon svg { width: 32px; height: 32px; color: var(--gray-300); }
+
+        .empty-state-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--gray-500);
+            margin-bottom: 0.35rem;
+        }
+
+        .empty-state-text { font-size: 13px; color: var(--gray-400); }
+
+        /* ===== SUBTITLE DIVIDER ===== */
+        .subsection-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--gray-800);
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .subsection-title::after {
+            content: '';
+            flex: 1;
+            height: 2px;
+            background: linear-gradient(90deg, var(--gray-200), transparent);
+            border-radius: 1px;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .header { padding: 1.5rem 1rem; }
+            .header h1 { font-size: 20px; }
+            .header-clock { display: none; }
+            .container { padding: 1rem 0.75rem 2rem; }
+            .content { padding: 1.25rem; border-radius: var(--radius-lg); }
+            .nav-tabs { gap: 4px; padding: 4px; }
+            .nav-tab { padding: 0.7rem 0.75rem; font-size: 12px; gap: 0.35rem; }
+            .nav-tab svg { width: 16px; height: 16px; }
+            .nav-tab .tab-label-full { display: none; }
+            .nav-tab .tab-label-short { display: inline; }
+            .stats-grid, .attendance-status { grid-template-columns: 1fr; }
+            .form-grid { grid-template-columns: 1fr; }
+            .btn-group { flex-direction: column; }
+            .activity-card { flex-direction: column; }
+            .activity-action { flex-direction: row; align-self: flex-end; }
+            .stat-value { font-size: 28px; }
+            .status-time { font-size: 22px; }
+        }
+
+        @media (min-width: 769px) {
+            .nav-tab .tab-label-short { display: none; }
+        }
+
+        /* ===== SCROLLBAR ===== */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--gray-300); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--gray-400); }
+
+        /* ===== UTILITIES ===== */
+        .mt-1 { margin-top: 0.5rem; }
+        .mt-2 { margin-top: 1rem; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>📋 Sistem Presensi Magang</h1>
-            <p>Universitas Muhammadiyah Kupang - Pencatatan Kehadiran & Aktivitas</p>
+    <div class="header">
+        <div class="header-content">
+            <div class="header-left">
+                <div class="header-logo">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 1.66 2.69 3 6 3s6-1.34 6-3v-5"/>
+                    </svg>
+                </div>
+                <div>
+                    <h1>Sistem Presensi Magang</h1>
+                    <p>Universitas Muhammadiyah Kupang &mdash; Pencatatan Kehadiran &amp; Aktivitas</p>
+                </div>
+            </div>
+            <div class="header-clock">
+                <span class="time" id="liveClock">--:--:--</span>
+                <span class="date" id="liveDate">Loading...</span>
+            </div>
         </div>
+    </div>
 
+    <div class="container">
         <div class="nav-tabs">
-            <button class="nav-tab active" onclick="switchTab('dashboard')">Dashboard</button>
-            <button class="nav-tab" onclick="switchTab('presensi')">Presensi</button>
-            <button class="nav-tab" onclick="switchTab('aktivitas')">Aktivitas</button>
-            <button class="nav-tab" onclick="switchTab('laporan')">Laporan</button>
+            <button class="nav-tab active" onclick="switchTab('dashboard', this)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                <span class="tab-label-full">Dashboard</span><span class="tab-label-short">Home</span>
+            </button>
+            <button class="nav-tab" onclick="switchTab('presensi', this)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                <span class="tab-label-full">Presensi</span><span class="tab-label-short">Absen</span>
+            </button>
+            <button class="nav-tab" onclick="switchTab('aktivitas', this)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                <span class="tab-label-full">Aktivitas</span><span class="tab-label-short">Kegiatan</span>
+            </button>
+            <button class="nav-tab" onclick="switchTab('laporan', this)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+                <span class="tab-label-full">Laporan</span><span class="tab-label-short">Izin</span>
+            </button>
         </div>
 
         <div class="content">
+            <!-- ===== DASHBOARD ===== -->
             <div class="tab-content active" id="dashboard">
-                <h2 style="margin-bottom: 1.5rem;">Dashboard</h2>
+                <h2 class="section-title">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                    Dashboard
+                </h2>
+                <p class="section-subtitle">Ringkasan kehadiran dan aktivitas magang Anda</p>
+
                 <div class="stats-grid">
-                    <div class="stat-box"><div class="stat-value" id="totalHadirStat">0</div><div class="stat-label">Hari Hadir</div></div>
-                    <div class="stat-box"><div class="stat-value" id="totalAktivitasStat">0</div><div class="stat-label">Total Aktivitas</div></div>
+                    <div class="stat-box primary-stat">
+                        <div class="stat-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                        </div>
+                        <div class="stat-value" id="totalHadirStat">0</div>
+                        <div class="stat-label">Hari Hadir</div>
+                    </div>
+                    <div class="stat-box success-stat">
+                        <div class="stat-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                        </div>
+                        <div class="stat-value" id="totalAktivitasStat">0</div>
+                        <div class="stat-label">Total Aktivitas</div>
+                    </div>
                 </div>
-                <h3 style="margin-bottom: 1rem;">Status Hari Ini</h3>
+
+                <h3 class="subsection-title">Status Hari Ini</h3>
                 <div class="attendance-status">
-                    <div class="status-card">
+                    <div class="status-card" id="checkinCard">
                         <div class="status-label">Waktu Datang</div>
-                        <div class="status-icon success" id="checkinIcon">✓</div>
+                        <div class="status-icon-wrap pending" id="checkinIcon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                        </div>
                         <div class="status-time" id="checkinTime">--:--</div>
-                        <p id="checkinStatus" style="font-size: 12px; color: #666; margin-top: 0.5rem;">Belum absen datang</p>
+                        <p class="status-text" id="checkinStatus">Belum absen datang</p>
                     </div>
-                    <div class="status-card">
+                    <div class="status-card" id="checkoutCard">
                         <div class="status-label">Waktu Pulang</div>
-                        <div class="status-icon warning" id="checkoutIcon">-</div>
+                        <div class="status-icon-wrap pending" id="checkoutIcon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 8 14"/></svg>
+                        </div>
                         <div class="status-time" id="checkoutTime">--:--</div>
-                        <p id="checkoutStatus" style="font-size: 12px; color: #666; margin-top: 0.5rem;">Belum absen pulang</p>
+                        <p class="status-text" id="checkoutStatus">Belum absen pulang</p>
                     </div>
                 </div>
             </div>
 
+            <!-- ===== PRESENSI ===== -->
             <div class="tab-content" id="presensi">
-                <h2 style="margin-bottom: 1.5rem;">Absensi Kehadiran</h2>
-                <div class="form-group"><label>Nama Siswa</label><input type="text" id="studentName" placeholder="Masukkan nama lengkap"></div>
-                <div class="form-group"><label>SEKOLAH / NIM</label><input type="text" id="studentId" placeholder="Isi Asal Sekolah / NIM Siswa"></div>
-                <div class="form-group"><label>Jurusan / Program Studi</label>
-                    <select id="program">
-                        <option value="">Pilih Jurusan</option>
-                        <option value="Teknik Komputer">Teknik Komputer dan Jaringan (TKJ)</option>
-                        <option value="Teknik Kendaraan">Teknik Kendaraan Ringan Otomotif (TKRO)</option>
-                        <option value="NKPI">Nautika Kapal Penangkapan Ikan</option>
-                        <option value="ATPH">Agribisnis Tanaman Pangan dan Hortikultura</option>
-                        <option value="APAT">Agribisnis Perikanan Air Tawar</option>
-                        <option value="TPHP">Teknologi Pengolahan Hasil Pertanian</option>
-                        <option value="TJKT">Teknik Jaringan Komputer dan Telekomunikasi</option>
-                        <option value="Lainnya">Lainnya...</option>
-                    </select>
+                <h2 class="section-title">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    Absensi Kehadiran
+                </h2>
+                <p class="section-subtitle">Catat waktu kehadiran dan kepulangan Anda</p>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Nama Siswa</label>
+                        <input type="text" id="studentName" placeholder="Masukkan nama lengkap">
+                    </div>
+                    <div class="form-group">
+                        <label>SEKOLAH / NIM</label>
+                        <input type="text" id="studentId" placeholder="Isi Asal Sekolah / NIM">
+                    </div>
+                    <div class="form-group full-width">
+                        <label>Jurusan / Program Studi</label>
+                        <select id="program">
+                            <option value="">Pilih Jurusan</option>
+                            <option value="Teknik Komputer">Teknik Komputer dan Jaringan (TKJ)</option>
+                            <option value="Teknik Kendaraan">Teknik Kendaraan Ringan Otomotif (TKRO)</option>
+                            <option value="NKPI">Nautika Kapal Penangkapan Ikan</option>
+                            <option value="ATPH">Agribisnis Tanaman Pangan dan Hortikultura</option>
+                            <option value="APAT">Agribisnis Perikanan Air Tawar</option>
+                            <option value="TPHP">Teknologi Pengolahan Hasil Pertanian</option>
+                            <option value="TJKT">Teknik Jaringan Komputer dan Telekomunikasi</option>
+                            <option value="Lainnya">Lainnya...</option>
+                        </select>
+                    </div>
                 </div>
+
                 <div class="btn-group">
-                    <button class="btn btn-success" onclick="checkIn()">✓ Absen Datang</button>
-                    <button class="btn btn-success" onclick="checkOut()">✗ Absen Pulang</button>
+                    <button class="btn btn-success" onclick="checkIn(this)">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                        <span class="btn-text">Absen Datang</span>
+                        <div class="spinner"></div>
+                    </button>
+                    <button class="btn btn-danger" onclick="checkOut(this)">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                        <span class="btn-text">Absen Pulang</span>
+                        <div class="spinner"></div>
+                    </button>
                 </div>
-                <h3 style="margin-top: 2rem; margin-bottom: 1rem;">Riwayat Presensi Hari Ini</h3>
-                <div id="attendanceHistory"><p style="text-align: center; color: #666; padding: 2rem;">Belum ada riwayat</p></div>
+
+                <h3 class="subsection-title">Riwayat Presensi Hari Ini</h3>
+                <div id="attendanceHistory">
+                    <div class="empty-state">
+                        <div class="empty-state-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                        </div>
+                        <div class="empty-state-title">Belum ada riwayat</div>
+                        <div class="empty-state-text">Absen datang untuk mulai mencatat kehadiran</div>
+                    </div>
+                </div>
             </div>
 
+            <!-- ===== AKTIVITAS ===== -->
             <div class="tab-content" id="aktivitas">
-                <h2 style="margin-bottom: 1.5rem;">Pencatatan Aktivitas Harian</h2>
-                <div class="form-group"><label>Nama Siswa</label><input type="text" id="activityStudentName" placeholder="Masukkan nama lengkap Anda"></div>
-                <div class="form-group"><label>Nama Kegiatan</label><input type="text" id="activityName" placeholder="Contoh: Pengecekan Jaringan Komputer"></div>
-                <div class="form-group"><label>Deskripsi Kegiatan</label><textarea id="activityDescription" placeholder="Jelaskan kegiatan secara detail..."></textarea></div>
-                <div class="form-group"><label>Tanggal Kegiatan</label><input type="date" id="activityDate"></div>
-                <div class="form-group"><label>Waktu Mulai</label><input type="time" id="activityStartTime"></div>
-                <div class="form-group"><label>Waktu Selesai</label><input type="time" id="activityEndTime"></div>
-                
-                <h3 style="margin-top: 2rem; margin-bottom: 1rem;">Lampiran Dokumen</h3>
-                <div class="upload-zone" onclick="document.getElementById('fileInput').click()">
-                    <div class="upload-icon">📸</div><div class="upload-text">Pilih foto/dokumen</div>
-                    <div class="upload-hint">Format: JPG, PNG, PDF (Nama file akan tersimpan di sistem)</div>
+                <h2 class="section-title">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                    Pencatatan Aktivitas Harian
+                </h2>
+                <p class="section-subtitle">Dokumentasikan kegiatan magang Anda setiap hari</p>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Nama Siswa</label>
+                        <input type="text" id="activityStudentName" placeholder="Masukkan nama lengkap">
+                    </div>
+                    <div class="form-group">
+                        <label>Nama Kegiatan</label>
+                        <input type="text" id="activityName" placeholder="Contoh: Pengecekan Jaringan">
+                    </div>
+                    <div class="form-group full-width">
+                        <label>Deskripsi Kegiatan</label>
+                        <textarea id="activityDescription" placeholder="Jelaskan kegiatan secara detail..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Tanggal Kegiatan</label>
+                        <input type="date" id="activityDate">
+                    </div>
+                    <div class="form-group">
+                        <label>Waktu</label>
+                        <div style="display:flex; gap:0.75rem; align-items:center;">
+                            <input type="time" id="activityStartTime" style="flex:1;" placeholder="Mulai">
+                            <span style="color:var(--gray-400); font-weight:600; font-size:13px;">s/d</span>
+                            <input type="time" id="activityEndTime" style="flex:1;" placeholder="Selesai">
+                        </div>
+                    </div>
                 </div>
-                <input type="file" id="fileInput" onchange="handleFileSelect(event)">
+
+                <h3 class="subsection-title">Lampiran Dokumen</h3>
+                <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()">
+                    <div class="upload-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                    </div>
+                    <div class="upload-text">Seret file ke sini atau <span class="upload-browse">pilih file</span></div>
+                    <div class="upload-hint">Format: JPG, PNG, PDF &mdash; Maks 5MB per file</div>
+                </div>
+                <input type="file" id="fileInput" multiple onchange="handleFileSelect(event)">
                 <div class="file-list" id="fileList"></div>
 
-                <div class="btn-group" style="margin-top: 2rem;">
-                    <button class="btn btn-primary" onclick="saveActivity()">Simpan Aktivitas</button>
-                    <button class="btn btn-secondary" onclick="resetActivityForm()">Reset</button>
+                <div class="btn-group">
+                    <button class="btn btn-primary" onclick="saveActivity(this)">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                        <span class="btn-text">Simpan Aktivitas</span>
+                        <div class="spinner"></div>
+                    </button>
+                    <button class="btn btn-secondary" onclick="confirmReset('activity')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+                        <span class="btn-text">Reset</span>
+                    </button>
                 </div>
 
-                <h3 style="margin-top: 2rem; margin-bottom: 1rem;">Riwayat Aktivitas</h3>
-                <div class="activity-list" id="activityList"><p style="text-align: center; color: #666; padding: 2rem;">Belum ada aktivitas</p></div>
+                <h3 class="subsection-title">Riwayat Aktivitas</h3>
+                <div class="activity-list" id="activityList">
+                    <div class="empty-state">
+                        <div class="empty-state-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
+                        </div>
+                        <div class="empty-state-title">Belum ada aktivitas</div>
+                        <div class="empty-state-text">Mulai catat kegiatan magang Anda</div>
+                    </div>
+                </div>
             </div>
 
+            <!-- ===== LAPORAN ===== -->
             <div class="tab-content" id="laporan">
-                <h2 style="margin-bottom: 1.5rem;">Laporan & Permohonan Izin</h2>
-                <div class="form-group"><label>Nama Siswa</label><input type="text" id="reportStudentName" placeholder="Masukkan nama lengkap Anda"></div>
-                <div class="form-group"><label>Tipe Laporan</label>
-                    <select id="reportType">
-                        <option value="">Pilih tipe laporan</option>
-                        <option value="izin_tidak_hadir">Permohonan Izin Tidak Hadir</option>
-                        <option value="cuti">Permohonan Cuti</option>
-                        <option value="sakit">Pemberitahuan Sakit</option>
-                        <option value="lainnya">Laporan Lainnya</option>
-                    </select>
-                </div>
-                <div class="form-group"><label>Tanggal Kejadian</label><input type="date" id="reportDate"></div>
-                <div class="form-group"><label>Keterangan/Alasan</label><textarea id="reportReason" placeholder="Jelaskan alasan Anda..."></textarea></div>
-                <div class="form-group"><label>Durasi (hari)</label><input type="number" id="reportDuration" min="1" placeholder="Berapa hari?"></div>
-                
-                <div class="btn-group">
-                    <button class="btn btn-primary" onclick="submitReport()">Ajukan Laporan</button>
-                    <button class="btn btn-secondary" onclick="resetReportForm()">Reset</button>
+                <h2 class="section-title">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+                    Laporan &amp; Permohonan Izin
+                </h2>
+                <p class="section-subtitle">Ajukan izin tidak hadir, cuti, atau laporan lainnya</p>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Nama Siswa</label>
+                        <input type="text" id="reportStudentName" placeholder="Masukkan nama lengkap">
+                    </div>
+                    <div class="form-group">
+                        <label>Tipe Laporan</label>
+                        <select id="reportType">
+                            <option value="">Pilih tipe laporan</option>
+                            <option value="izin_tidak_hadir">Permohonan Izin Tidak Hadir</option>
+                            <option value="cuti">Permohonan Cuti</option>
+                            <option value="sakit">Pemberitahuan Sakit</option>
+                            <option value="lainnya">Laporan Lainnya</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Tanggal Kejadian</label>
+                        <input type="date" id="reportDate">
+                    </div>
+                    <div class="form-group">
+                        <label>Durasi (hari)</label>
+                        <input type="number" id="reportDuration" min="1" placeholder="Berapa hari?">
+                    </div>
+                    <div class="form-group full-width">
+                        <label>Keterangan / Alasan</label>
+                        <textarea id="reportReason" placeholder="Jelaskan alasan Anda..."></textarea>
+                    </div>
                 </div>
 
-                <h3 style="margin-top: 2rem; margin-bottom: 1rem;">Riwayat Laporan</h3>
-                <table class="report-table">
-                    <thead>
-                        <tr>
-                            <th>Tanggal</th>
-                            <th>Nama Siswa</th>
-                            <th>Tipe</th>
-                            <th>Status</th>
-                            <th>Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody id="reportTableBody">
-                        <tr><td colspan="5" style="text-align: center; padding: 2rem;">Belum ada laporan</td></tr>
-                    </tbody>
-                </table>
+                <div class="btn-group">
+                    <button class="btn btn-primary" onclick="submitReport(this)">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                        <span class="btn-text">Ajukan Laporan</span>
+                        <div class="spinner"></div>
+                    </button>
+                    <button class="btn btn-secondary" onclick="confirmReset('report')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+                        <span class="btn-text">Reset</span>
+                    </button>
+                </div>
+
+                <h3 class="subsection-title">Riwayat Laporan</h3>
+                <div class="table-wrapper">
+                    <table class="report-table">
+                        <thead>
+                            <tr>
+                                <th>Tanggal</th>
+                                <th>Nama Siswa</th>
+                                <th>Tipe</th>
+                                <th>Status</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="reportTableBody">
+                            <tr><td colspan="5" style="text-align: center; padding: 2rem;">Belum ada laporan</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Confirm Modal -->
+    <div class="modal-overlay" id="confirmModal">
+        <div class="modal-box">
+            <div class="modal-icon warn" id="modalIcon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            </div>
+            <div class="modal-title" id="modalTitle">Konfirmasi Reset</div>
+            <div class="modal-message" id="modalMessage">Apakah Anda yakin ingin mereset semua data pada form ini?</div>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" onclick="closeModal()">Batal</button>
+                <button class="btn btn-primary" id="modalConfirmBtn" onclick="modalConfirmAction()">Ya, Reset</button>
             </div>
         </div>
     </div>
@@ -218,12 +1374,23 @@
         }
 
         function saveData() { localStorage.setItem('presensiData', JSON.stringify(appData)); }
-        
-        function switchTab(tabName) {
+
+        // ===== LIVE CLOCK =====
+        function updateClock() {
+            const now = new Date();
+            document.getElementById('liveClock').textContent = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            const options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
+            document.getElementById('liveDate').textContent = now.toLocaleDateString('id-ID', options);
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // ===== TAB SWITCHING =====
+        function switchTab(tabName, btn) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.nav-tab').forEach(el => el.classList.remove('active'));
             document.getElementById(tabName).classList.add('active');
-            event.target.classList.add('active');
+            if (btn) btn.classList.add('active');
         }
 
         function resetPresensiForm() {
@@ -232,38 +1399,55 @@
             document.getElementById('program').value = '';
         }
 
-        function checkIn() {
+        // ===== BUTTON LOADING HELPER =====
+        function setBtnLoading(btn, loading) {
+            if (loading) btn.classList.add('loading');
+            else btn.classList.remove('loading');
+        }
+
+        // ===== CHECK IN =====
+        function checkIn(btn) {
             const name = document.getElementById('studentName').value;
             const id = document.getElementById('studentId').value;
             const program = document.getElementById('program').value;
             if (!name || !id || !program) return showToast('Harap isi semua data siswa', 'error');
 
-            const attendance = { date: new Date().toLocaleDateString('id-ID'), name, id, program, checkinTime: new Date().toLocaleTimeString('id-ID'), checkoutTime: null, type: 'checkin' };
-            appData.attendances.push(attendance); 
-            sendDataToSheet(attendance, 'presensi'); 
-            saveData(); 
-            updateDashboard();
-            showToast('Absensi datang berhasil dicatat!', 'success'); 
-            resetPresensiForm();
+            setBtnLoading(btn, true);
+            setTimeout(() => {
+                const attendance = { date: new Date().toLocaleDateString('id-ID'), name, id, program, checkinTime: new Date().toLocaleTimeString('id-ID'), checkoutTime: null, type: 'checkin' };
+                appData.attendances.push(attendance);
+                sendDataToSheet(attendance, 'presensi');
+                saveData();
+                updateDashboard();
+                showToast('Absensi datang berhasil dicatat!', 'success');
+                resetPresensiForm();
+                setBtnLoading(btn, false);
+            }, 500);
         }
 
-        function checkOut() {
+        // ===== CHECK OUT =====
+        function checkOut(btn) {
             const name = document.getElementById('studentName').value;
             const id = document.getElementById('studentId').value;
             const program = document.getElementById('program').value;
-            
+
             if (!name || !id) return showToast('Harap isi nama dan sekolah/NIM', 'error');
 
-            const attendance = { date: new Date().toLocaleDateString('id-ID'), name, id, program, checkoutTime: new Date().toLocaleTimeString('id-ID'), type: 'checkout' };
-            appData.attendances.push(attendance); 
-            sendDataToSheet(attendance, 'presensi'); 
-            saveData(); 
-            updateDashboard();
-            showToast('Absensi pulang berhasil dicatat!', 'success'); 
-            resetPresensiForm();
+            setBtnLoading(btn, true);
+            setTimeout(() => {
+                const attendance = { date: new Date().toLocaleDateString('id-ID'), name, id, program, checkoutTime: new Date().toLocaleTimeString('id-ID'), type: 'checkout' };
+                appData.attendances.push(attendance);
+                sendDataToSheet(attendance, 'presensi');
+                saveData();
+                updateDashboard();
+                showToast('Absensi pulang berhasil dicatat!', 'success');
+                resetPresensiForm();
+                setBtnLoading(btn, false);
+            }, 500);
         }
 
-        function saveActivity() {
+        // ===== SAVE ACTIVITY =====
+        function saveActivity(btn) {
             const studentName = document.getElementById('activityStudentName').value;
             const name = document.getElementById('activityName').value;
             const desc = document.getElementById('activityDescription').value;
@@ -273,31 +1457,50 @@
 
             if (!studentName || !name || !desc || !date || !start || !end) return showToast('Harap isi semua data kegiatan', 'error');
 
-            const activity = { id: Date.now(), studentName, name, description: desc, date, startTime: start, endTime: end, files: appData.files, createdAt: new Date().toLocaleString('id-ID') };
-            appData.activities.push(activity); 
-            sendDataToSheet(activity, 'aktivitas');
-            
-            appData.files = []; 
-            saveData(); 
-            showToast('Aktivitas berhasil disimpan!', 'success');
-            resetActivityForm(); 
-            updateActivityList(); 
-            updateDashboard();
+            setBtnLoading(btn, true);
+            setTimeout(() => {
+                const activity = { id: Date.now(), studentName, name, description: desc, date, startTime: start, endTime: end, files: appData.files, createdAt: new Date().toLocaleString('id-ID') };
+                appData.activities.push(activity);
+                sendDataToSheet(activity, 'aktivitas');
+
+                appData.files = [];
+                saveData();
+                showToast('Aktivitas berhasil disimpan!', 'success');
+                resetActivityForm();
+                updateActivityList();
+                updateDashboard();
+                setBtnLoading(btn, false);
+            }, 500);
         }
 
         function resetActivityForm() {
             document.getElementById('activityStudentName').value = '';
-            document.getElementById('activityName').value = ''; 
+            document.getElementById('activityName').value = '';
             document.getElementById('activityDescription').value = '';
-            document.getElementById('fileList').innerHTML = ''; 
-            appData.files = []; 
+            document.getElementById('fileList').innerHTML = '';
+            appData.files = [];
             setTodayDate();
+        }
+
+        // ===== DRAG & DROP =====
+        const uploadZone = document.getElementById('uploadZone');
+        if (uploadZone) {
+            ['dragenter', 'dragover'].forEach(evt => {
+                uploadZone.addEventListener(evt, e => { e.preventDefault(); e.stopPropagation(); uploadZone.classList.add('dragover'); });
+            });
+            ['dragleave', 'drop'].forEach(evt => {
+                uploadZone.addEventListener(evt, e => { e.preventDefault(); e.stopPropagation(); uploadZone.classList.remove('dragover'); });
+            });
+            uploadZone.addEventListener('drop', e => {
+                const dt = e.dataTransfer;
+                if (dt.files.length) handleFileSelect({ target: { files: dt.files } });
+            });
         }
 
         function handleFileSelect(event) {
             const files = event.target.files;
             const fileList = document.getElementById('fileList');
-            
+
             for (let file of files) {
                 if (file.size > 5 * 1024 * 1024) {
                     showToast('File terlalu besar (max 5MB)', 'error');
@@ -306,14 +1509,20 @@
 
                 const fileInfo = { name: file.name, size: (file.size / 1024 / 1024).toFixed(2) + ' MB' };
                 appData.files.push(fileInfo);
-                
+
                 const fileItem = document.createElement('div');
                 fileItem.className = 'file-item';
                 fileItem.innerHTML = `
-                    <div class="file-name">📄 ${file.name}</div>
+                    <div class="file-name">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
+                        ${file.name}
+                    </div>
                     <div style="display: flex; align-items: center;">
                         <span class="file-size">${fileInfo.size}</span>
-                        <button class="btn-small btn-small-danger" onclick="removeFile('${file.name}')" style="margin-left: 0.5rem;">Hapus</button>
+                        <button class="btn-small btn-outline-danger" onclick="removeFile('${file.name}')" style="margin-left: 0.5rem;">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                            Hapus
+                        </button>
                     </div>
                 `;
                 fileList.appendChild(fileItem);
@@ -329,17 +1538,24 @@
                 const fileItem = document.createElement('div');
                 fileItem.className = 'file-item';
                 fileItem.innerHTML = `
-                    <div class="file-name">📄 ${file.name}</div>
+                    <div class="file-name">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
+                        ${file.name}
+                    </div>
                     <div style="display: flex; align-items: center;">
                         <span class="file-size">${file.size}</span>
-                        <button class="btn-small btn-small-danger" onclick="removeFile('${file.name}')" style="margin-left: 0.5rem;">Hapus</button>
+                        <button class="btn-small btn-outline-danger" onclick="removeFile('${file.name}')" style="margin-left: 0.5rem;">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                            Hapus
+                        </button>
                     </div>
                 `;
                 fileList.appendChild(fileItem);
             });
         }
 
-        function submitReport() {
+        // ===== SUBMIT REPORT =====
+        function submitReport(btn) {
             const studentName = document.getElementById('reportStudentName').value;
             const type = document.getElementById('reportType').value;
             const date = document.getElementById('reportDate').value;
@@ -348,23 +1564,65 @@
 
             if (!studentName || !type || !date || !reason || !duration) return showToast('Harap isi semua data laporan', 'error');
 
-            const report = { id: Date.now(), studentName, date, type, reason, duration, status: 'Menunggu Persetujuan', createdAt: new Date().toLocaleDateString('id-ID') };
-            appData.reports.push(report); 
-            sendDataToSheet(report, 'laporan'); 
-            saveData();
-            showToast('Laporan berhasil diajukan!', 'success'); 
-            resetReportForm(); 
-            updateReportTable();
+            setBtnLoading(btn, true);
+            setTimeout(() => {
+                const report = { id: Date.now(), studentName, date, type, reason, duration, status: 'Menunggu Persetujuan', createdAt: new Date().toLocaleDateString('id-ID') };
+                appData.reports.push(report);
+                sendDataToSheet(report, 'laporan');
+                saveData();
+                showToast('Laporan berhasil diajukan!', 'success');
+                resetReportForm();
+                updateReportTable();
+                setBtnLoading(btn, false);
+            }, 500);
         }
 
         function resetReportForm() {
             document.getElementById('reportStudentName').value = '';
-            document.getElementById('reportType').value = ''; 
+            document.getElementById('reportType').value = '';
             document.getElementById('reportReason').value = '';
-            document.getElementById('reportDuration').value = ''; 
+            document.getElementById('reportDuration').value = '';
             setTodayDate();
         }
 
+        // ===== CONFIRM MODAL =====
+        let pendingConfirmAction = null;
+
+        function confirmReset(type) {
+            const modal = document.getElementById('confirmModal');
+            const title = document.getElementById('modalTitle');
+            const message = document.getElementById('modalMessage');
+            const confirmBtn = document.getElementById('modalConfirmBtn');
+
+            if (type === 'activity') {
+                title.textContent = 'Reset Form Aktivitas';
+                message.textContent = 'Semua data yang telah Anda isi pada form aktivitas akan dihapus. Lanjutkan?';
+                pendingConfirmAction = () => { resetActivityForm(); showToast('Form aktivitas telah direset', 'success'); };
+            } else if (type === 'report') {
+                title.textContent = 'Reset Form Laporan';
+                message.textContent = 'Semua data yang telah Anda isi pada form laporan akan dihapus. Lanjutkan?';
+                pendingConfirmAction = () => { resetReportForm(); showToast('Form laporan telah direset', 'success'); };
+            }
+
+            modal.classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('confirmModal').classList.remove('active');
+            pendingConfirmAction = null;
+        }
+
+        function modalConfirmAction() {
+            if (pendingConfirmAction) pendingConfirmAction();
+            closeModal();
+        }
+
+        // Close modal on overlay click
+        document.getElementById('confirmModal').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+
+        // ===== CETAK PDF (unchanged logic, just kept as-is) =====
         function cetakPDF(tipe, id) {
             let dataSurat, judulSurat;
             if (tipe === 'laporan') {
@@ -431,18 +1689,50 @@
             printWindow.document.close();
         }
 
+        // ===== UPDATE LISTS =====
         function updateActivityList() {
             const container = document.getElementById('activityList');
-            if (appData.activities.length === 0) return container.innerHTML = '<p style="text-align: center; color: #666; padding: 2rem;">Belum ada aktivitas</p>';
+            if (appData.activities.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
+                        </div>
+                        <div class="empty-state-title">Belum ada aktivitas</div>
+                        <div class="empty-state-text">Mulai catat kegiatan magang Anda</div>
+                    </div>`;
+                return;
+            }
 
             container.innerHTML = [...appData.activities].reverse().map(a => `
                 <div class="activity-card">
                     <div class="activity-info">
-                        <h3>${a.name}</h3><p>👤 ${a.studentName || '-'} | 📅 ${a.date} | ⏰ ${a.startTime} - ${a.endTime}</p><p>${a.description}</p>
-                        <p><span class="badge badge-success">${a.files.length} file</span></p>
+                        <h3>${a.name}</h3>
+                        <div class="activity-meta">
+                            <span class="activity-meta-item">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                                ${a.studentName || '-'}
+                            </span>
+                            <span class="activity-meta-item">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                                ${a.date}
+                            </span>
+                            <span class="activity-meta-item">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                                ${a.startTime} - ${a.endTime}
+                            </span>
+                        </div>
+                        <p class="activity-desc">${a.description}</p>
+                        <span class="badge badge-success">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+                            ${a.files.length} file
+                        </span>
                     </div>
                     <div class="activity-action">
-                        <button class="btn-small btn-small-info" onclick="cetakPDF('aktivitas', ${a.id})">🖨️ Cetak PDF</button>
+                        <button class="btn-small btn-outline-info" onclick="cetakPDF('aktivitas', ${a.id})">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+                            Cetak PDF
+                        </button>
                     </div>
                 </div>
             `).join('');
@@ -450,15 +1740,24 @@
 
         function updateReportTable() {
             const tbody = document.getElementById('reportTableBody');
-            if (appData.reports.length === 0) return tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 2rem;">Belum ada laporan</td></tr>';
+            if (appData.reports.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 2rem;">Belum ada laporan</td></tr>';
+                return;
+            }
 
             tbody.innerHTML = [...appData.reports].reverse().map(r => `
                 <tr>
                     <td>${r.createdAt}</td>
                     <td><strong>${r.studentName || '-'}</strong></td>
                     <td>${r.type.replace('_', ' ').toUpperCase()}</td>
-                    <td><span class="badge badge-warning">${r.status}</span></td>
-                    <td><button class="btn-small btn-small-info" onclick="cetakPDF('laporan', ${r.id})">🖨️ Cetak PDF</button></td>
+                    <td><span class="badge badge-warning">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                        ${r.status}
+                    </span></td>
+                    <td><button class="btn-small btn-outline-info" onclick="cetakPDF('laporan', ${r.id})">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+                        Cetak PDF
+                    </button></td>
                 </tr>
             `).join('');
         }
@@ -466,52 +1765,115 @@
         function updateAttendanceHistory() {
             const container = document.getElementById('attendanceHistory');
             const todayAttendances = appData.attendances.filter(a => a.date === new Date().toLocaleDateString('id-ID'));
-            if (todayAttendances.length === 0) return container.innerHTML = '<p style="text-align: center; padding: 2rem;">Belum ada riwayat</p>';
+            if (todayAttendances.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                        </div>
+                        <div class="empty-state-title">Belum ada riwayat</div>
+                        <div class="empty-state-text">Absen datang untuk mulai mencatat kehadiran</div>
+                    </div>`;
+                return;
+            }
 
-            container.innerHTML = `<table class="report-table"><thead><tr><th>Nama</th><th>Jurusan</th><th>Waktu</th><th>Tipe</th></tr></thead><tbody>
+            container.innerHTML = `<div class="table-wrapper"><table class="report-table"><thead><tr><th>Nama</th><th>Jurusan</th><th>Waktu</th><th>Tipe</th></tr></thead><tbody>
                 ${todayAttendances.map(a => `<tr><td>${a.name}</td><td>${a.program || '-'}</td><td>${a.checkinTime || a.checkoutTime}</td><td><span class="badge badge-info">${a.type === 'checkin' ? 'Datang' : 'Pulang'}</span></td></tr>`).join('')}
-            </tbody></table>`;
+            </tbody></table></div>`;
         }
 
+        // ===== ANIMATED COUNTER =====
+        function animateCounter(el, target) {
+            const current = parseInt(el.textContent) || 0;
+            if (current === target) return;
+            const diff = target - current;
+            const steps = Math.min(Math.abs(diff), 20);
+            const stepTime = 300 / steps;
+            let step = 0;
+            const timer = setInterval(() => {
+                step++;
+                const progress = step / steps;
+                const eased = 1 - Math.pow(1 - progress, 3);
+                el.textContent = Math.round(current + diff * eased);
+                if (step >= steps) {
+                    el.textContent = target;
+                    clearInterval(timer);
+                }
+            }, stepTime);
+        }
+
+        // ===== UPDATE DASHBOARD =====
         function updateDashboard() {
             const today = new Date().toLocaleDateString('id-ID');
             const todayAttendances = appData.attendances.filter(a => a.date === today);
 
-            document.getElementById('totalHadirStat').textContent = new Set(appData.attendances.map(a => a.date)).size;
-            document.getElementById('totalAktivitasStat').textContent = appData.activities.length;
-            
+            animateCounter(document.getElementById('totalHadirStat'), new Set(appData.attendances.map(a => a.date)).size);
+            animateCounter(document.getElementById('totalAktivitasStat'), appData.activities.length);
+
+            const checkinCard = document.getElementById('checkinCard');
+            const checkoutCard = document.getElementById('checkoutCard');
+
+            // Reset
             document.getElementById('checkinTime').textContent = '--:--';
             document.getElementById('checkinStatus').textContent = 'Belum absen datang';
+            document.getElementById('checkinStatus').className = 'status-text';
+            document.getElementById('checkinIcon').className = 'status-icon-wrap pending';
+            document.getElementById('checkinIcon').innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>';
+            checkinCard.classList.remove('checked-in');
+
             document.getElementById('checkoutTime').textContent = '--:--';
             document.getElementById('checkoutStatus').textContent = 'Belum absen pulang';
-            document.getElementById('checkoutIcon').innerHTML = '-';
-            document.getElementById('checkoutIcon').className = 'status-icon warning';
+            document.getElementById('checkoutStatus').className = 'status-text';
+            document.getElementById('checkoutIcon').className = 'status-icon-wrap pending';
+            document.getElementById('checkoutIcon').innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 8 14"/></svg>';
+            checkoutCard.classList.remove('checked-out');
 
             if (todayAttendances.some(a => a.type === 'checkin')) {
                 const checkin = todayAttendances.find(a => a.type === 'checkin');
                 document.getElementById('checkinTime').textContent = checkin.checkinTime;
                 document.getElementById('checkinStatus').textContent = 'Sudah absen datang';
+                document.getElementById('checkinStatus').className = 'status-text active';
+                document.getElementById('checkinIcon').className = 'status-icon-wrap done';
+                document.getElementById('checkinIcon').innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>';
+                checkinCard.classList.add('checked-in');
             }
 
             if (todayAttendances.some(a => a.type === 'checkout')) {
                 const checkout = todayAttendances.find(a => a.type === 'checkout');
                 document.getElementById('checkoutTime').textContent = checkout.checkoutTime;
                 document.getElementById('checkoutStatus').textContent = 'Sudah absen pulang';
-                document.getElementById('checkoutIcon').innerHTML = '✓';
-                document.getElementById('checkoutIcon').className = 'status-icon success';
+                document.getElementById('checkoutStatus').className = 'status-text active';
+                document.getElementById('checkoutIcon').className = 'status-icon-wrap done';
+                document.getElementById('checkoutIcon').innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>';
+                checkoutCard.classList.add('checked-out');
             }
 
             updateAttendanceHistory();
         }
 
+        // ===== TOAST =====
         function showToast(message, type = 'success') {
-            const toast = document.createElement('div'); toast.className = `toast toast-${type}`; toast.textContent = message;
-            document.body.appendChild(toast); setTimeout(() => toast.remove(), 3000);
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+
+            const iconSvg = type === 'success'
+                ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>'
+                : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>';
+
+            toast.innerHTML = `${iconSvg}<span>${message}</span><div class="toast-progress"></div>`;
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.classList.add('removing');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
         }
 
         function setTodayDate() {
             const today = new Date().toISOString().split('T')[0];
-            document.getElementById('activityDate').value = today; document.getElementById('reportDate').value = today;
+            document.getElementById('activityDate').value = today;
+            document.getElementById('reportDate').value = today;
         }
 
         window.addEventListener('load', () => { loadData(); setTodayDate(); updateActivityList(); updateReportTable(); });
